@@ -1,0 +1,298 @@
+
+
+(defvar mytoolbar-item-list nil)
+;; tool-bar-add-item
+(setq mytoolbar-item-list
+      (list
+       ;; (list "ppcmm/codepilot" 'codepilot-start
+       ;;       'codepilot-start
+       ;;       :help "Start CodePilot or switch to CodePilot buffer."
+       ;;       )
+
+       ;; (list "ppcmm/context" (lambda ()
+       ;;                         (interactive)
+       ;;                         (popup-menu codepilot-context-menu)
+       ;;                         )
+       ;;       'codepilot-context-menu
+       ;;       ;; :enable '(and (codepilot-active) codepilot-context-menu)
+       ;;       :help "CodePilot Context Menu"
+       ;;       )
+
+       ;; (list "ppcmm/pls3" 'pls
+       ;;       'pls
+       ;;       :help "Start PLS or switch to PLS buffer."
+       ;;       )
+
+
+       (list "close" 'kill-this-buffer
+             'kill-this-buffer
+             :help "close. Hotkey: k or C-x k"
+             )
+
+
+       (list "ppcmm/sidebar" 'cplist-side-window
+             'cplist-side-window
+             :help "Show or delete the sidebar window. Hotkey: F8"
+             )
+
+       (list "ppcmm/refresh" 'cplist-list-id-section-bufs
+             'cplist-list-id-section-bufs
+             :help "Update the sidebar. Hotkey: g"
+             )
+
+       (list "ppcmm/toggle-sidebar" 'cplist-minimize/restore-sidebar
+             'cplist-minimize/restore-sidebar
+             :help "Minimize or restore the sidebar. Hotkey: `"
+             )
+
+       (list "ppcmm/search" 'codepilot-search-hi-string
+             'codepilot-search-hi-string
+             :help "Search Text. Hotkey: s"
+             )
+
+       (list "ppcmm/search-id" 'codepilot-search-hi
+             'codepilot-search-hi
+             ;; :enable '(eq major-mode 'protel-mode)
+             :help "Search Protel ID in the buffer. Hotkey: /"
+             )
+
+       (list "ppcmm/search-b" 'codepilot-search-hl-again-b
+             'codepilot-search-hl-again-b
+             :help "Repeat search backward. Hotkey: b"
+             )
+
+       (list "ppcmm/search-f" 'codepilot-search-hl-again-f
+             'codepilot-search-hl-again-f
+             :help "Repeat search forward. Hotkey: f"
+             )
+
+
+       (list "ppcmm/which-procs" 'proc-outline-which-procs-i-in
+             'proc-outline-which-procs-i-in
+             :help "Which Procs I in. Hotkey: -"
+             ;; :enable '(eq major-mode 'protel-mode)
+             )
+
+       (list "ppcmm/search-id-and-which-procs" 'proc-outline-search-id-and-which-procs
+             'proc-outline-search-id-and-which-procs
+             :help "Search the id under point and show Which Procs it in. Hotkey: ["
+             ;; :enable '(eq major-mode 'protel-mode)
+             )
+
+       (list "ppcmm/which-blocks" 'proc-outline-where-we-are
+             'proc-outline-where-we-are
+             :help "Which Blocks. Hotkey: ]"
+             ;; :enable '(eq major-mode 'protel-mode)
+             )
+
+       ;; (list "ppcmm/proc-outline" 'protel-proc-outline
+       ;;       'protel-proc-outline
+       ;;       :help "Proc Outline. Hotkey: \\"
+       ;;       :enable '(eq major-mode 'protel-mode)
+       ;;       )
+
+       (list "ppcmm/three-wins" 'proc-outline-blocktrace-and-procs-layout
+             'proc-outline-blocktrace-and-procs-layout
+             :help "3 windows layout. Hotkey: 2 or 3"
+             )
+
+       (list "ppcmm/one-win" 'delete-other-windows
+             'delete-other-windows
+             :help "1 windows layout. Hotkey: 1"
+             )
+
+       ;; (list "ppcmm/xref" 'protel-find-sym-in-xref
+       ;;       'protel-find-sym-in-xref
+       ;;       :help "XREF, the hotkey is \"x\"."
+       ;;       :enable '(eq major-mode 'protel-mode)
+       ;;       )
+
+       (list "ppcmm/del-win-2" 'delete-window
+             'delete-window
+             :help "Delete this window. Hotkey: 0 or C-x 0"
+             )
+
+       (list "left-arrow" 'codepilot-previous-buffer
+             'codepilot-previous
+             :enable '(not (ring-empty-p codepilot-marker-ring))
+             :help "Backward in the history. Hotkey: ,"
+             )
+       (list "right-arrow" 'codepilot-forward-buffer
+             'codepilot-forward
+             :enable '(not (ring-empty-p codepilot-forward-marker-ring))
+             :help "Forward in the history. Hotkey: \".\""
+             )
+
+       ;; (list "ppcmm/foldunfold-3" 'more-smarter-fold-unfold
+       ;;       'more-smarter-fold-unfold
+       ;;       :enable '(eq major-mode 'protel-mode)
+       ;;       :help "Fold a block. Hotkey: F10"
+       ;;       )
+
+       ;; (list "ppcmm/fold-all-branch" 'fold-ifcaseselect-branches
+       ;;       'fold-ifcaseselect-branches
+       ;;       :enable '(eq major-mode 'protel-mode)
+       ;;       :help "Fold if/case/select branches. Hotkey: F7"
+       ;;       )
+
+       ;; (list "up-node" 'which-block
+       ;;       'which-block
+       ;;       :enable '(eq major-mode 'protel-mode)
+       ;;       :help "Up block. Hotkey: F6"
+       ;;       )
+
+       (list "ppcmm/up" 'pop-to-mark-command
+             'pop-to-mark-command
+             :help "Pop to mark. Hotkey: j or M-F6"
+             )
+
+       ;; (list "ppcmm/codepilot-r" 'codepilot-query-sym
+       ;;       'codepilot-query-sym
+       ;;       ;; :enable '(codepilot-active)
+       ;;       :help "Combined Query from CodePilot. Hotkey: o"
+       ;;       )
+
+       ;; (list "ppcmm/codepilot-d" 'codepilot-goto-def
+       ;;       'codepilot-goto-def
+       ;;       ;; :enable '(codepilot-active)
+       ;;       :help "Goto Definition from CodePilot. Hotkey: y"
+       ;;       )
+
+       ;; (list "ppcmm/codepilot-i" 'codepilot-goto-imp
+       ;;       'codepilot-goto-imp
+       ;;       ;; :enable '(codepilot-active)
+       ;;       :help "Goto Implementation from CodePilot. Hotkey: h"
+       ;;       )
+
+       ;; (list "ppcmm/open-section" 'msym-open-pls-section-from-context-i
+       ;;       'msym-open-pls-section-from-context-i
+       ;;       ;; :enable '(msym-active)
+       ;;       :help "Open section from PLS/MSym. Hotkey: 9"
+       ;;       )
+
+       ;; (list "ppcmm/r" 'msym-show-ref
+       ;;       'msym-show-ref
+       ;;       ;; :enable '(msym-active)
+       ;;       :help "Query cross-reference from MSym. Hotkey: 8 or Enter"
+       ;;       )
+
+       ;; (list "ppcmm/d2" 'msym-goto-def
+       ;;       'msym-goto-def
+       ;;       ;; :enable '(and (msym-active) (eq major-mode 'protel-mode))
+       ;;       :help "Goto definition via MSym. Hotkey: d"
+       ;;       )
+
+       ;; (list "ppcmm/i2" 'msym-goto-imp
+       ;;       'msym-goto-imp
+       ;;       ;; :enable '(and (msym-active) (eq major-mode 'protel-mode))
+       ;;       :help "Goto definition via MSym. Hotkey: q"
+       ;;       )
+
+       (list "ppcmm/linum" 'linum-mode
+             'linum-mode
+             :help "Toggle line number."
+             )
+
+       (list "ppcmm/toggle-myimenu" 'myimenu-toggle-myimenu-win
+             'myimenu-toggle-myimenu-win
+             :help "Toggle MyImenu. (Procedure list). Hotkey: = "
+             )
+
+       (list "ppcmm/note" 're
+             're
+             :help "Hey, take a note. Hotkey: r"
+             )
+
+       (list "ppcmm/check-note" 'codepilot-open-remember-data-file
+             'codepilot-open-remember-data-file
+             :help "Check the note file."
+             )
+
+       (list "save" 'remember-buffer
+             'remember-buffer
+             :visible '(eq major-mode 'remember-mode)
+             :help "Save the note. Hotkey: C-c C-c or C-x C-s"
+             )
+
+       (list "cancel" 'remember-destroy
+             'remember-destroy
+             :visible '(eq major-mode 'remember-mode)
+             :help "Cancel the note. Destroy the note buffer. Hotkey: C-c C-k"
+             )
+
+
+       ;; (list "ppcmm/stop" 'keyboard-quit
+       ;;                  'remember-destroy
+       ;;                    :help "Terminat current operation."
+       ;;                    )
+
+       ))
+
+
+
+(defun mytoolbar-add-form-list (ll)
+  (setcdr tool-bar-map nil)
+  (dolist (i ll)
+    (apply 'tool-bar-add-item i)
+    ))
+
+
+;; (mytoolbar-add-form-list mytoolbar-item-list)
+
+
+(defun mytoolbar-type-list-from-item-list (ll)
+  (let (ll2)
+    (dolist (i ll)
+      (push (list 'const (third i)) ll2)
+      )
+    (setq ll2 (nreverse ll2))
+    (push 'set ll2)
+    ll2
+    ))
+
+(defvar mytoolbar-type-list nil)
+
+(setq mytoolbar-type-list (mytoolbar-type-list-from-item-list mytoolbar-item-list))
+
+
+(defun mytoolbar-add-items-from-config (ll)
+  (setcdr tool-bar-map nil)
+  (let (item)
+    (dolist (i ll)
+      (setq item (find i mytoolbar-item-list :key #'third))
+      (when item
+        (apply 'tool-bar-add-item item)
+        ))))
+
+(defun mytoolbar-config-list-set (symbol value)
+  (cond (value
+         (set-default symbol value)
+         (mytoolbar-add-items-from-config value)
+         )
+        (t
+         (mytoolbar-add-form-list mytoolbar-item-list)
+         )))
+
+(defun mytoolbar-init-list-from-item-list (ll)
+  (let (ll2)
+    (dolist (i ll)
+      (push (third i) ll2)
+      )
+    (setq ll2 (nreverse ll2))
+    ll2
+    ))
+
+(defcustom mytoolbar-config-list (mytoolbar-init-list-from-item-list mytoolbar-item-list)
+  "Toobar Configuration list."
+  :type mytoolbar-type-list
+  :set 'mytoolbar-config-list-set
+  :group 'codepilot-convenience
+  )
+
+
+
+
+
+;; book mark, myimenu, calltrak?, context menu? restore/save id list
+
+(provide 'mytoolbar)

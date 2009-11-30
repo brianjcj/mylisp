@@ -1,0 +1,433 @@
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(case-fold-search t)
+ '(column-number-mode t)
+ '(cua-mode t nil (cua-base))
+ '(current-language-environment "Chinese-GB")
+ '(desktop-globals-to-save (quote (desktop-missing-file-warning tags-file-name tags-table-list search-ring regexp-search-ring register-alist)))
+ '(desktop-locals-to-save (quote (desktop-locals-to-save truncate-lines case-fold-search case-replace fill-column overwrite-mode change-log-default-name line-number-mode column-number-mode size-indication-mode buffer-file-coding-system indent-tabs-mode tab-width indicate-buffer-boundaries indicate-empty-lines show-trailing-whitespace)))
+ '(desktop-modes-not-to-save (quote (tags-table-mode cpxref-mode protel-mode)))
+ '(dired-listing-switches "-alrt")
+ '(display-battery-mode t)
+ '(display-time-mode t)
+ '(global-font-lock-mode t nil (font-lock))
+ '(indicate-buffer-boundaries (quote right))
+ '(indicate-empty-lines t)
+ '(longlines-auto-wrap t)
+ '(longlines-wrap-follows-window-size t)
+ '(muse-publish-contents-depth 3)
+ '(occur-hook (quote (occur-rename-buffer)))
+ '(recentf-auto-cleanup (quote never))
+ '(recentf-max-menu-items 30)
+ '(recentf-max-saved-items 50)
+ '(recentf-menu-filter (quote recentf-arrange-by-mode))
+ '(recentf-mode t)
+ '(save-place t nil (saveplace))
+ '(savehist-mode t nil (savehist))
+ '(scroll-conservatively 10)
+ '(scroll-step 1)
+ '(show-paren-mode t nil (paren))
+ '(show-trailing-whitespace nil)
+ '(size-indication-mode t)
+ '(transient-mark-mode t)
+ '(which-func-modes (quote (emacs-lisp-mode c-mode c++-mode perl-mode cperl-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode protel-mode)))
+ '(which-function-mode t nil (which-func)))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(font-lock-comment-face ((t (:foreground "blue"))))
+ '(linum ((t (:inherit shadow :foreground "ForestGreen"))))
+ '(protel-folding-overlay ((default (:inherit region :box (:line-width 1 :color "DarkSeaGreen1" :style released-button))) (((class color)) (:background "DarkSeaGreen2" :foreground "black"))))
+ '(protel-hl-text-face ((default (:inherit region)) (((class color)) (:background "yellow" :foreground "black"))))
+ '(tabbar-default-face ((t (:inherit variable-pitch :background "gray72" :foreground "black" :height 0.9))))
+ '(tabbar-selected-face ((t (:inherit tabbar-default-face :background "gray80" :foreground "blue" :box (:line-width 2 :color "white" :style released-button) :weight bold)))))
+
+
+(defvar emacs-dir nil)
+(setq emacs-dir (file-name-directory (directory-file-name exec-directory)))
+
+;; ;; PPCMM,  Part 1/2
+(add-to-list 'load-path (concat emacs-dir "mylisp") )
+(add-to-list 'load-path (concat emacs-dir "mylisp/remember-1.9"))
+;; ;; PPCMM, end of part 1/2
+
+(require 'outline)
+
+(setq column-number-mode t)
+(setq mouse-yank-at-point t)
+(show-paren-mode t)
+(setq show-paren-style 'parentheses)
+;;(mouse-avoidance-mode 'animate)
+(setq frame-title-format "%b@emacs")
+
+
+
+;; ====================
+;; undo and redo
+;; ====================
+(require 'redo)
+(global-set-key [(f5)] 'undo)
+(global-set-key [(shift f5)] 'redo)
+
+
+(setq default-major-mode 'text-mode)
+
+(add-hook 'text-mode-hook (lambda () (turn-on-auto-fill)))
+
+(setq next-line-add-newlines nil)
+
+;; ================================
+;;  % for paren match
+;; ================================
+(global-set-key "%" 'match-paren)
+
+(defun match-paren (arg)
+  "Go to the matching paren if on a paren; otherwise insert %."
+  (interactive "p")
+  (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+	((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+	(t (self-insert-command (or arg 1)))))
+
+;; ====== end of paren match ============
+
+;; ===================
+;; C-c a like f in vi
+;; ===================
+(defun wy-go-to-char (n char)
+  "Move forward to Nth occurence of CHAR.
+Typing `wy-go-to-char-key' again will move forwad to the next Nth
+occurence of CHAR."
+  (interactive "p\ncGo to char: ")
+  (search-forward (char-to-string char) nil nil n)
+  (while (char-equal (read-char)
+		     char)
+    (search-forward (char-to-string char) nil nil n))
+
+  (setq unread-command-events (list last-input-event)))
+
+(define-key global-map (kbd "C-c a") 'wy-go-to-char)
+
+;; ==========================
+
+
+
+;; Don't create the backup file
+(setq make-backup-files nil)
+
+
+;; Protel
+(require 'protel)
+
+;; ---------------------------------------------------------------
+(require 'protel-util)
+(setq my-hide-region-before-string "........")
+(setq my-hide-region-after-string  "........")
+
+;; ---------------------------------------------------------------
+
+(put 'narrow-to-region 'disabled nil)
+
+
+;; PLS mode
+(require 'pls)
+
+(global-set-key [(control f7)] 'pls-goto-me)
+
+;; ---------------------------------------------------------------
+
+
+;;   If you want to choose it from a menu, such as "Tools", you can do this:
+;;
+;;   (define-key-after (lookup-key global-map [menu-bar tools])
+;;      [speedbar] '("Speedbar" . speedbar-frame-mode) [calendar])
+;;
+;;   If you want to access speedbar using only the keyboard, do this:
+;;
+(global-set-key [f4] 'speedbar-get-focus)
+
+;; Change the outline prefix command for C-c @ to C-o
+(setq outline-minor-mode-prefix [(control o)])
+
+
+;; ibuffer
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; tabbar
+(require 'tabbar)
+(tabbar-mode)
+
+(add-hook 'kill-buffer-hook 'tabbar-buffer-kill-buffer-hook)
+;;(remove-hook 'kill-buffer-hook 'tabbar-buffer-kill-buffer-hook)
+
+
+;; table
+(autoload 'table-insert "table" "WYGIWYS table editor")
+
+;; setnu
+(require 'setnu)
+
+;; htmlize
+(require 'htmlize)
+
+;; browse-kill-ring
+(require 'browse-kill-ring)
+(global-set-key [(control c)(k)] 'browse-kill-ring)
+(browse-kill-ring-default-keybindings)
+
+
+
+;; ido=====================================
+(require 'ido)
+(ido-mode t)
+;; --------------------End of ido--------------------------
+
+
+(put 'upcase-region 'disabled nil)
+
+(put 'downcase-region 'disabled nil)
+
+;; =========================CUA====================================
+(cua-mode t)
+;; ---------------------End of CUA---------------------------------
+
+(server-start)
+
+
+(auto-image-file-mode t)
+
+(defun w32-restore-frame ()
+  "Restore a minimized frame"
+  (interactive)
+  (w32-send-sys-command 61728))
+
+(defun w32-maximize-frame ()
+  "Maximize the current frame"
+  (interactive)
+  (w32-send-sys-command 61488))
+
+(require 'saveplace)
+(require 'savehist)
+(require 'recentf)
+
+;; misc
+(require 'test)
+(global-set-key [f6] 'analyze-featcd)
+(global-set-key [f7] 'analyze-hex-fc)
+
+(defun del-occur-bufs ()
+  ""
+  (interactive)
+  (and t; (y-or-n-p "Delete all the *Occur* buffers?")
+       (dolist (buf (buffer-list))
+         (if (eq (with-current-buffer buf major-mode) 'occur-mode)
+             ;(print (buffer-name buf)))
+             (kill-buffer buf))
+         )))
+
+(defun pop-occur-buf ()
+  ""
+  (interactive)
+  (catch 'loop
+    (dolist (buf (buffer-list))
+      (if (eq (with-current-buffer buf major-mode) 'occur-mode)
+          (progn
+            (pop-to-buffer buf)
+            ;(fit-window-to-buffer (get-buffer-window buf) (/ (frame-height) 2))
+            (shrink-window-if-larger-than-buffer (get-buffer-window buf))
+            (throw 'loop t)
+            )))))
+
+;; Common Lisp indentation.
+(autoload 'common-lisp-indent-function "cl-indent")
+;;(setq lisp-indent-function 'common-lisp-indent-function)
+
+(add-hook 'lisp-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)
+          (setq lisp-indent-function 'common-lisp-indent-function)
+          (setq indent-tabs-mode nil)))
+
+
+;; Emacs Lisp mode, auto indent.
+(add-hook 'emacs-lisp-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)))
+
+(defun vi-list ()
+  "Simulate a :set list in Vi."
+  (interactive)
+  (standard-display-ascii ?\t "^I")
+  (standard-display-ascii ?\n "$\n")
+  )
+
+(defun vi-nolist ()
+  "Simulate a :set nolist in Vi."
+  (interactive)
+  (standard-display-ascii ?\t "\t")
+  (standard-display-ascii ?\n "\n")
+  )
+
+
+;; open a new temp file for easily edit something temporarily.
+
+(defun open-a-temp-file ()
+  ""
+  (interactive)
+  (find-file (make-temp-file "brian"))
+  )
+
+(global-set-key [f9] 'open-a-temp-file)
+
+(add-hook 'python-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)))
+
+
+;; Remember
+(require 'remember)
+(autoload 'remember "remember" nil t)
+(autoload 'remember-region "remember" nil t)
+
+
+
+;; Horizontal scroll
+;; =======================================
+(setq auto-hscroll-mode nil)
+
+(defvar number-to-scroll 1)
+
+(global-set-key [(control ?\,)] (lambda () (interactive) (scroll-right number-to-scroll nil)))
+(global-set-key [(control ?\.)] (lambda () (interactive) (scroll-left number-to-scroll nil)))
+
+(put 'scroll-left 'disabled nil)
+
+
+;; Complete (HE) AutoType
+;; There are totally 14 funcs available. Here 11 are used.
+(global-set-key [(meta ?/)] 'hippie-expand)
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev
+	try-expand-dabbrev-visible
+	try-expand-dabbrev-all-buffers
+	try-expand-dabbrev-from-kill
+	try-complete-file-name-partially
+	try-complete-file-name
+	try-expand-all-abbrevs
+	try-expand-list
+	try-expand-line
+	try-complete-lisp-symbol-partially
+	try-complete-lisp-symbol))
+
+
+(global-set-key "<" 'skeleton-pair-insert-maybe)
+(global-set-key "(" 'skeleton-pair-insert-maybe)
+(global-set-key "[" 'skeleton-pair-insert-maybe)
+(global-set-key "\"" 'skeleton-pair-insert-maybe)
+; Single ' is often used in elisp, so don't pair it.
+;(global-set-key "\'" 'skeleton-pair-insert-maybe)
+
+(setq skeleton-pair t)
+
+
+;;; Prevent Extraneous Tabs
+(setq-default indent-tabs-mode nil)
+
+(setq set-mark-command-repeat-pop t)
+
+;** line-move-ignore-invisible now defaults to t.
+
+
+;; Remove the print-buffer button in the tool bar.
+;; ===============================================
+(delete-if (lambda (button)
+	     (and (consp button)
+		  (eq (car button) 'print-buffer)))
+	   tool-bar-map)
+
+
+;; occur hook
+;; =================
+;; Note: this hook shall be called before occur-rename-buffer.
+;;       Then it means shall be added after occur-rename-buffer.
+(defun fit-occur-buf ()
+  ""
+  (interactive)
+  ;(fit-window-to-buffer (get-buffer-window (get-buffer "*Occur*")) (/ (frame-height) 2))
+  (shrink-window-if-larger-than-buffer (get-buffer-window (get-buffer "*Occur*")))
+  )
+
+(add-hook 'occur-hook 'fit-occur-buf)
+
+(setq tramp-default-method "ftp")
+
+;; color
+(w32-define-rgb-color 204 232 207 "Nice Green")
+(set-background-color "Nice Green")
+
+;; CodePilot
+(require 'codepilot)
+(global-set-key [(control f8)] 'codepilot-ide)
+
+(require 'mycalltrak)
+
+(require 'callplot)
+
+;; ;; PPCMM Part 2/2
+;; ;; ------------------------------------
+;; ;; NOTE: use "/" as the folder separator!
+;; (setq codepilot-dir "D:/emacs-22.1/mybin")   ;; where the codepilot.jar located.
+(setq codepilot-dir (concat emacs-dir "mybin"))
+
+;; cplist-file-dir is used to specify the default dir to save your cplist file.
+;; (setq cplist-file-dir "d:/")
+
+;; ;; **IMPORTANT**
+;; ;; PPCMM relies on this regexp to check whether a UNIX command has completed.
+;; ;; The following regexp support the unix prompt like "20> " and "/home/brianjcj>".
+;; ;; If you unix prompt is not of this format, please change it. 
+;; (setq unix-prompt-regexp "^[0-9]*> \\|^/.*>")
+;; ;; -------------------------------------
+;; ;; PPCMM, end of Part 2/2
+
+
+;; PPCMM init.
+
+;; Before your init, reserve this file for me in case I need to alter
+;; something for you in the future.
+(when (file-readable-p (concat emacs-dir "before-your-init.el"))
+  (load-file (concat emacs-dir "before-my-init.el")))
+
+;; Put your init stuff in "my-init.el"
+(when (file-readable-p (concat emacs-dir "my-init.el"))
+  (load-file (concat emacs-dir "my-init.el")))
+
+;; After your init, reserve this file for me in case I need to alter
+;; something for you in the future.
+(when (file-readable-p (concat emacs-dir "after-your-init.el"))
+  (load-file (concat emacs-dir "after-my-init.el")))
+
+;; desktop
+;; M-x desktop-save
+;; It's better put this near the end of the file, after
+;; the setting related to file opening since desktop script
+;; will open some files automatically.
+;; e.g., put it after chinese setting and CEDET.
+;;
+;; Move it to the end regarding the case .emacs has problem.
+;;
+(load "desktop")
+;; (if (string< "21" (substring (emacs-version) 10 12 ))
+;;     (desktop-save-mode)
+;;   (desktop-load-default))
+(desktop-save-mode)
+;!!!!!delete!!!!(desktop-read)!!!otherwise, the buffer will be
+;restore twice! That's why longlines mode doesn't work well.
+
+(setq inhibit-startup-screen t)
+
+(add-hook 'after-init-hook (lambda ()
+                             (w32-maximize-frame)
+                             (sit-for 0.2)
+                             (codepilot-ide))
+          :append)
+
